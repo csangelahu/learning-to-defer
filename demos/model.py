@@ -19,7 +19,6 @@ class LogisticRegressionModule(nn.Module):
         # Exclude the weights connected to the deferral class
         weights_to_regularize = torch.cat([self.linear.weight[:, :self.deferral_class_index], self.linear.weight[:, self.deferral_class_index + 1:]], dim=1)
         l2_reg = torch.sum(weights_to_regularize**2)
-        # l2_reg = torch.sum(self.linear.weight[:, :-1]**2)
 
         return self.l2_lambda * l2_reg
 

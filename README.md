@@ -23,3 +23,9 @@ This repository contains code and resources for the project **"Learning to Defer
 
 - `l2d_functionality/`: Implementation of l2d_loss and l2d_eval classes.
 - `demos/`: Directory for demonstrations showcasing package usage.
+
+## Parametrization types
+- `softmax`: [https://arxiv.org/abs/2006.01862]
+- `asymmetric_sm`: [https://openreview.net/pdf?id=TWb9y4PNSW]
+- `one_vs_all`: [https://proceedings.mlr.press/v162/verma22c.html]
+- `realizable_sm`: [https://proceedings.mlr.press/v206/mozannar23a/mozannar23a.pdf]

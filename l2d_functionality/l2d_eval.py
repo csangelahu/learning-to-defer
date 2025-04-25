@@ -92,8 +92,6 @@ class L2D_Eval:
         reject_mask = (g_perp - max_other_classes) >= self.tau
         return reject_mask
     
-        # if r(x) = 1, deferred to human; if r(x) = 0, classifier makes final decision 
-    
     def evaluate_model(self):
 
         """
@@ -117,8 +115,6 @@ class L2D_Eval:
             outputs_pure_classifier = self.outputs.clone()
             outputs_pure_classifier[:, self.deferral_class_index] = -float('inf')
 
-            
-
             _, predicted_pure_classifier = torch.max(outputs_pure_classifier.data, 1)
 
             if self.realizable_sm:
@@ -128,8 +124,6 @@ class L2D_Eval:
             else:
                 _, predicted = torch.max(self.outputs.data, 1)
                 is_deferred = predicted == self.deferral_class_index
-
-
 
             is_correct = predicted == self.labels  # Correct non-deferred 
             is_correct_pure_classifier = predicted_pure_classifier == self.labels 
@@ -147,7 +141,7 @@ class L2D_Eval:
             deferred_correct += correct_deferrals.sum().item()
             total_deferred += is_deferred.sum().item()
 
-            # results for each class class
+            # results for each class 
             for i in range(self.num_classes):  
                 class_mask = self.labels == i
                 class_correct_nondeferred[i] += (is_correct & ~is_deferred & class_mask).sum().item()
@@ -158,7 +152,7 @@ class L2D_Eval:
                 if len(deferred_class_indices) > 0:
                     is_deferred_indices = torch.where(is_deferred)[0]
                     
-                    # Identify the indices of the deferred_class_indices in is_deferred_indices
+                    # Identify if the indices of the deferred_class_indices in is_deferred_indices
                     deferred_mask_in_is_deferred = torch.isin(is_deferred_indices, deferred_class_indices)
                     
                     class_deferred_correct = correct_deferrals[deferred_mask_in_is_deferred]
@@ -182,7 +176,7 @@ class L2D_Eval:
                 'Overall L2D Accuracy': self.overall_accuracy
             }
 
-            # Print per-class accuracy and deferral rate
+            # per-class accuracy and deferral rate
             self.class_accuracy_list = []
             self.class_deferral_rate_list = []
             self.class_overall_accuracy_list = []

@@ -1,6 +1,5 @@
 import torch 
 import torch.nn.functional as F
-import time 
 
 class L2D_Loss:
 
@@ -70,7 +69,7 @@ class L2D_Loss:
         Returns: loss value.
         """
 
-        logits_stable = logits - torch.max(logits, dim=1, keepdim=True).values # numerical stability trick 
+        logits_stable = logits - torch.max(logits, dim=1, keepdim=True).values # numerical stability 
         
         exp_logits = torch.exp(logits_stable)
         sum_exp_logits = torch.sum(exp_logits, dim=1, keepdim=True)
@@ -144,7 +143,7 @@ class L2D_Loss:
         
         batch_size, num_classes = logits.shape
 
-        logits_stable = logits - torch.max(logits, dim=1, keepdim=True).values # numerical stability trick
+        logits_stable = logits - torch.max(logits, dim=1, keepdim=True).values # numerical stability
         exp_logits = torch.exp(logits_stable)
 
         mask = torch.ones_like(logits, dtype=torch.bool)
@@ -192,7 +191,7 @@ class L2D_Loss:
 
         batch_size, num_classes = logits.shape
 
-        logits_stable = logits - torch.max(logits, dim=1, keepdim=True).values # numerical stability trick
+        logits_stable = logits - torch.max(logits, dim=1, keepdim=True).values # numerical stability
 
         exp_logits = torch.exp(logits_stable)
         sum_exp_logits_all = torch.sum(exp_logits, dim=1, keepdim=True)

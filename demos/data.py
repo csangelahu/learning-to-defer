@@ -27,9 +27,8 @@ class ExpertMNIST:
         if true_label % 2 == 0:
             return (true_label + 1) % 10 # always incorrect 
         else:
-            # return true_label # for testing always correct on 50% of cases 
             bernoulli_prob = self.base_prob + true_label / 100
-            if random.random() < bernoulli_prob:  # Sample from Bernoulli
+            if random.random() < bernoulli_prob:
                 return true_label  # Correct prediction
             else:
                 return (true_label + 1) % 10   # Incorrect prediction
