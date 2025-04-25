@@ -1,0 +1,14 @@
+# Allow .gitignore itself
+!.gitignore
+
+# Ignore Python virtual environments
+venv/
+.env
+
+# Ignore cache files
+__pycache__/
+**/__pycache__/
+
+# Ignore PNG files
+*.png
+**/*.png
