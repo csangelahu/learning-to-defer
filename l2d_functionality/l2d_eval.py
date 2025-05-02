@@ -161,8 +161,8 @@ class L2D_Eval:
                     class_correct_overall[i] += (is_correct & ~is_deferred & class_mask).sum().item()
 
 
-            # accuracy if the model had classified everything
-            self.accuracy_pure_classifier = 100 * correct_pure_classifier / len(self.labels)
+            
+            self.accuracy_pure_classifier = 100 * correct_pure_classifier / len(self.labels) # accuracy if the model had classified everything
             self.accuracy_nondeferred = 100 * correct / total if total > 0 else 0.0
             self.deferral_accuracy = 100 * deferred_correct / total_deferred if total_deferred > 0 else 0.0
             self.deferral_rate = 100 * total_deferred / len(self.labels)  # Overall deferral rate
