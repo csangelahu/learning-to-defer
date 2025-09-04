@@ -147,19 +147,11 @@ class L2D_Eval:
                 class_correct_nondeferred[i] += (is_correct & ~is_deferred & class_mask).sum().item()
                 class_total[i] += class_mask.sum().item()
                 class_deferred[i] += (is_deferred & class_mask).sum().item()
-
-                deferred_class_indices = torch.where(is_deferred & class_mask)[0]  # Indices of deferred samples for this class
-                if len(deferred_class_indices) > 0:
-                    is_deferred_indices = torch.where(is_deferred)[0]
-                    
-                    # Identify if the indices of the deferred_class_indices in is_deferred_indices
-                    deferred_mask_in_is_deferred = torch.isin(is_deferred_indices, deferred_class_indices)
-                    
-                    class_deferred_correct = correct_deferrals[deferred_mask_in_is_deferred]
-                    class_correct_overall[i] += (is_correct & ~is_deferred & class_mask).sum().item() + class_deferred_correct.sum().item()
-                else:
-                    class_correct_overall[i] += (is_correct & ~is_deferred & class_mask).sum().item()
-
+                
+                deferred_mask = is_deferred & class_mask  
+                class_deferred_correct = (self.expert_labels[deferred_mask] == self.labels[deferred_mask])
+                class_correct_overall[i] += (is_correct & ~is_deferred & class_mask).sum().item() \
+                                            + class_deferred_correct.sum().item()
 
             
             self.accuracy_pure_classifier = 100 * correct_pure_classifier / len(self.labels) # accuracy if the model had classified everything
