@@ -25,13 +25,14 @@ class ExpertMNIST:
 
         assert 0 <= true_label < 10, "true label must be a single digit"
         if true_label % 2 == 0:
-            # return (true_label + 1) % 10 # always incorrect 
-            bernoulli_prob = 0.5 + true_label / 100
-            if random.random() < bernoulli_prob:
-                return true_label  # Correct prediction
-            else:
-                return (true_label + 1) % 10   # Incorrect prediction
+            return (true_label + 1) % 10 # always incorrect 
+            # bernoulli_prob = 0.5 + true_label / 100
+            # if random.random() < bernoulli_prob:
+            #     return true_label  # Correct prediction
+            # else:
+            #     return (true_label + 1) % 10   # Incorrect prediction
         else:
+            # return true_label
             bernoulli_prob = self.base_prob + true_label / 100
             if random.random() < bernoulli_prob:
                 return true_label  # Correct prediction
