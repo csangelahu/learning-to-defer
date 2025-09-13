@@ -57,3 +57,51 @@ class OneHiddenLayerNNMultiExpert(nn.Module):
         l2_reg += torch.sum(class_weights ** 2)
 
         return self.l2_lambda * l2_reg
+
+
+class CustomMLPMultiExpert(nn.Module):
+    def __init__(self, input_dim, num_classes, num_experts, l2_lambda,
+                 hidden_dims=[512, 256, 128, 128], activation=nn.ReLU, dropout_rate=0.0):
+        super(CustomMLPMultiExpert, self).__init__()
+
+        self.num_classes = num_classes
+        self.num_experts = num_experts
+        self.output_dim = num_classes + num_experts
+
+        self.layers = nn.ModuleList()
+        self.activation_fn = activation()
+        self.dropout = nn.Dropout(dropout_rate)
+
+        # Hidden layers
+        in_dim = input_dim
+        for h_dim in hidden_dims:
+            self.layers.append(nn.Linear(in_dim, h_dim))
+            in_dim = h_dim
+
+        # Output layer
+        self.output = nn.Linear(in_dim, self.output_dim)
+
+        self.l2_lambda = l2_lambda
+
+    def forward(self, x):
+        for layer in self.layers:
+            x = self.activation_fn(layer(x))
+            x = self.dropout(x)
+        x = self.output(x)
+        return x
+
+    def l2_regularization(self):
+        if self.l2_lambda == 0:
+            return torch.tensor(0.0, device=self.output.weight.device)
+
+        l2_reg = torch.tensor(0.0, device=self.output.weight.device)
+
+        # L2 on all hidden layer weights
+        for layer in self.layers:
+            l2_reg += torch.sum(layer.weight ** 2)
+
+        # Only regularize output weights for class logits (not expert logits)
+        class_weights = self.output.weight[:, :self.num_classes]
+        l2_reg += torch.sum(class_weights ** 2)
+
+        return self.l2_lambda * l2_reg
