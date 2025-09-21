@@ -38,32 +38,7 @@ class L2D_Eval_Multi_Expert:
             Tensor: A tensor of final predictions (batch_size,). Values will be
                     class indices (0 to K-1) or deferral indices (K to K+J-1).
         """
-        class_logits = logits[:, :num_classes]
-        expert_logits = logits[:, num_classes:]
-
-        class_scores, predicted_classes = torch.max(class_logits, dim=1)
-
-        # best expert to defer to
-        expert_scores, predicted_experts_relative = torch.max(expert_logits, dim=1)
-        
-        # Convert to the global logit index
-        num_experts = expert_logits.size(1)
-        if num_experts > 0:
-            predicted_experts_global = predicted_experts_relative + num_classes
-        else: # Handle case with no experts
-            predicted_experts_global = torch.tensor([])
-
-
-        # Determine which samples to defer
-        if num_experts > 0:
-            defer_mask = (class_scores <= expert_scores)
-        else:
-            defer_mask = torch.zeros_like(class_scores, dtype=torch.bool)
-
-        final_predictions = predicted_classes.clone()
-        if num_experts > 0:
-            final_predictions[defer_mask] = predicted_experts_global[defer_mask]
-
+        final_predictions = torch.argmax(logits, dim=1)
         return final_predictions
 
 

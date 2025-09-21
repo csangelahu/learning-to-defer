@@ -29,3 +29,4 @@ This repository contains code and resources for the project **"Learning to Defer
 - `asymmetric_sm`: [https://openreview.net/pdf?id=TWb9y4PNSW]
 - `one_vs_all`: [https://proceedings.mlr.press/v162/verma22c.html]
 - `realizable_sm`: [https://proceedings.mlr.press/v206/mozannar23a/mozannar23a.pdf]
+- `softmax` and `one_vs_all` for multiple experts: [https://arxiv.org/pdf/2210.16955]
