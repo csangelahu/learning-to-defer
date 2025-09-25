@@ -26,26 +26,19 @@ class ExpertMNIST:
         assert 0 <= true_label < 10, "true label must be a single digit"
         if true_label % 2 == 0:
             return (true_label + 1) % 10 # always incorrect 
+            # bernoulli_prob = 0.5 + true_label / 100
+            # if random.random() < bernoulli_prob:
+            #     return true_label  # Correct prediction
+            # else:
+            #     return (true_label + 1) % 10   # Incorrect prediction
         else:
+            # return true_label
             bernoulli_prob = self.base_prob + true_label / 100
             if random.random() < bernoulli_prob:
                 return true_label  # Correct prediction
             else:
                 return (true_label + 1) % 10   # Incorrect prediction
             
-class ExpertCIFAR:
-    def __init__(self, k):
-        assert 1 <= k <= 10, "k must be an integer in the range [1, 10]"
-        self.k = k
-
-    def expert_prediction(self, true_label):
-        assert 0 <= true_label < 10, "true label must be a single digit in the range [0, 9]"
-        
-        if true_label < self.k:
-            return true_label  # Expert predicts correctly for the first k classes
-        else:
-            return random.randint(0, 9)  # Expert predicts randomly from all classes
-
 
 def get_dataloaders(train_dataset_raw, expert_labels_train, test_dataset_raw, expert_labels_test, batch_size=64):
 
