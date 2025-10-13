@@ -23,21 +23,21 @@ class SimpleCNNFeatureExtractor(nn.Module):
         return self.fc(self.conv(x))
 
 
-# Expert encoder : transform into representation of expert, psi 
-class ExpertEmbeddingEncoder(nn.Module):
-    def __init__(self, num_classes, phi_dim=8, hidden=[64, 32]):
-        super().__init__()
-        layers = []
-        in_dim = num_classes
-        for h in hidden:
-            layers += [nn.Linear(in_dim, h), nn.ReLU()]
-            in_dim = h
-        layers.append(nn.Linear(in_dim, phi_dim))
-        self.mlp = nn.Sequential(*layers)
+# # Expert encoder : transform into representation of expert, psi 
+# class ExpertEmbeddingEncoder(nn.Module):
+#     def __init__(self, num_classes, phi_dim=8, hidden=[64, 32]):
+#         super().__init__()
+#         layers = []
+#         in_dim = num_classes
+#         for h in hidden:
+#             layers += [nn.Linear(in_dim, h), nn.ReLU()]
+#             in_dim = h
+#         layers.append(nn.Linear(in_dim, phi_dim))
+#         self.mlp = nn.Sequential(*layers)
 
-    def forward(self, psi_all):
-        # psi_all: [E, K] -> phi_all: [E, phi_dim]
-        return self.mlp(psi_all)
+#     def forward(self, psi_all):
+#         # psi_all: [E, K] -> phi_all: [E, phi_dim]
+#         return self.mlp(psi_all)
 
 # Combines classifier with rejector
 class ExpertDecisionModule(nn.Module):
@@ -74,3 +74,18 @@ class ExpertDecisionModule(nn.Module):
         g_perp_flat = self.rejector_head(fe_flat)      # [N*E, 1]
         g_perp = g_perp_flat.view(N, E)                # [N, E]
         return g_classes, g_perp                        # [N, K], [N, E]
+
+
+# single rejector g_perp(x), for averaged expert representations 
+class ExpertDecisionModuleAvg(nn.Module):
+    def __init__(self, feature_dim, num_classes):
+        super().__init__()
+        self.feature_extractor = SimpleCNNFeatureExtractor(out_dim=feature_dim)
+        self.classifier_head = nn.Linear(feature_dim, num_classes)   # g_1..g_K
+        self.rejector_head = nn.Linear(feature_dim, 1)               # g_perp(x)
+
+    def forward(self, x):
+        f_x = self.feature_extractor(x)
+        g_classes = self.classifier_head(f_x)        # [N,K]
+        g_perp = self.rejector_head(f_x).squeeze(1)  # [N]
+        return g_classes, g_perp
