@@ -6,7 +6,7 @@ class L2DInference:
     """Unified inference class for standard and population-based learning-to-defer."""
 
     def __init__(self, num_classes, model=None, cnn=None, l2d=None,
-                 expert_pop=None, device='cpu', expert_aware=None):
+                 expert_pop=None, device='cpu', expert_aware=None, tau=None, realizable_sm=False):
         """
         Args:
             num_classes (int): Number of classes.
@@ -16,6 +16,8 @@ class L2DInference:
             expert_pop: PopulationSimulator instance (for population-based L2D).
             device: Torch device.
             expert_aware (bool): True for Eq.7 (expert-aware), False for Eq.8 (pop-avg).
+            tau (float, optional): Threshold for the deferral decision (realizable softmax).
+            realizable_sm (bool, optional): Whether tau-based deferral rule is applied.
         """
         self.model = model
         self.cnn = cnn
@@ -24,6 +26,8 @@ class L2DInference:
         self.expert_pop = expert_pop
         self.device = device
         self.expert_aware = expert_aware
+        self.tau = tau
+        self.realizable_sm = realizable_sm
 
     def run(self, test_loader, psi_test=None, expert_idx=None):
         if self.model is not None:
@@ -43,12 +47,20 @@ class L2DInference:
 
                 outputs = self.model(images)
                 logits_classes = outputs[:, :self.num_classes]
+                deferral_logits = outputs[:, self.num_classes:]
 
                 _, raw_pred = torch.max(logits_classes, dim=1)
-                _, full_pred = torch.max(outputs, dim=1)
 
-                defer_mask = full_pred >= self.num_classes
-                defer_indices = torch.full_like(full_pred, 0)
+                if self.realizable_sm and self.tau is not None:
+                    max_logits, _ = torch.max(logits_classes, dim=1)
+                    defer_mask = (deferral_logits.squeeze() - max_logits) >= self.tau
+                    full_pred = raw_pred.clone()
+                    full_pred[defer_mask] = self.num_classes
+                else:
+                    _, full_pred = torch.max(outputs, dim=1)
+                    defer_mask = full_pred >= self.num_classes
+
+                defer_indices = torch.full_like(raw_pred, 0)
 
                 if defer_mask.any():
                     defer_expert_idx = full_pred[defer_mask] - self.num_classes + 1
@@ -60,7 +72,7 @@ class L2DInference:
                     corrected_pred = full_pred.clone()
                     corrected_pred[deferred_samples] = chosen_expert_labels
                 else:
-                    corrected_pred = full_pred.clone()
+                    corrected_pred = raw_pred.clone()
 
                 all_final_preds.append(corrected_pred)
                 all_raw_preds.append(raw_pred)
