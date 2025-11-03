@@ -1,9 +1,12 @@
-import torch
+import torch # type: ignore
 from tqdm import tqdm
 
 class L2D_Eval_Population:
     
     def __init__(self, cnn, l2d, expert_pop, num_classes, device, expert_aware=True):
+        """l2d is the expert decision module model. It should output the 
+        logits for the model-predicted class labels and deferral decisions."""
+        
         self.cnn = cnn
         self.l2d = l2d
         self.expert_pop = expert_pop
