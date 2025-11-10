@@ -21,7 +21,7 @@ This repository contains code and resources for the project **"Learning to Defer
 
 ## Project Structure
 
-- `l2d_functionality/`: Implementation of loss functions, inference (`l2d_inference.py`), and evaulation (`l2d_eval_combined.py`) classes.
+- `l2d_functionality/`: Implementation of loss functions, inference (`l2d_inference.py`), and evaluation (`l2d_eval_combined.py`) classes.
 - `demos/`: Directory for demonstrations showcasing package usage. `ALL_refactorized_demo.ipynb` demonstrates usage for all L2D settings, using the inference and combined evaluation classes. 
 
 ## Parametrization types
