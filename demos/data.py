@@ -39,6 +39,19 @@ class ExpertMNIST:
             else:
                 return (true_label + 1) % 10   # Incorrect prediction
             
+def get_dataloaders_with_val(train_dataset_raw, expert_labels_train,
+                    val_dataset_raw, expert_labels_val,
+                    test_dataset_raw, expert_labels_test, batch_size=64):
+
+    train_dataset = ExpertCombinedDataset(train_dataset_raw, expert_labels_train)
+    val_dataset = ExpertCombinedDataset(val_dataset_raw, expert_labels_val)
+    test_dataset = ExpertCombinedDataset(test_dataset_raw, expert_labels_test)
+
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+    return train_loader, val_loader, test_loader
 
 def get_dataloaders(train_dataset_raw, expert_labels_train, test_dataset_raw, expert_labels_test, batch_size=64):
 

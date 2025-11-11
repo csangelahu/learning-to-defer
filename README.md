@@ -24,10 +24,11 @@ This repository contains code and resources for the project **"Learning to Defer
 - `l2d_functionality/`: Implementation of loss functions, inference (`l2d_inference.py`), and evaluation (`l2d_eval_combined.py`) classes.
 - `demos/`: Directory for demonstrations showcasing package usage. `ALL_refactorized_demo.ipynb` demonstrates usage for all L2D settings, using the inference and combined evaluation classes. 
 
-## Parametrization types
+## Sources
 - `softmax`: [https://arxiv.org/abs/2006.01862]
 - `asymmetric_sm`: [https://openreview.net/pdf?id=TWb9y4PNSW]
 - `one_vs_all`: [https://proceedings.mlr.press/v162/verma22c.html]
 - `realizable_sm`: [https://proceedings.mlr.press/v206/mozannar23a/mozannar23a.pdf]
 - `softmax` and `one_vs_all` for multiple experts: [https://arxiv.org/pdf/2210.16955]
 - Learning from a population: [https://arxiv.org/pdf/2403.02683]
+- Multi-objective constraints: [https://arxiv.org/abs/2407.12710]
